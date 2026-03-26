@@ -448,8 +448,17 @@ const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
 
 const Page3MultiDimension = () => {
   const cards = [
-    { title: "JURASSIC", id: "01", desc: "The dawn of biological dominance." },
-    { title: "MAYA", id: "02", desc: "Celestial alignment and ritual." },
+    { 
+      title: "JURASSIC", 
+      id: "01", 
+      desc: "The dawn of biological dominance."
+    },
+    { 
+      title: "MAYA", 
+      id: "02", 
+      desc: "Celestial alignment and ritual.",
+      image: "https://i.postimg.cc/5NMCcxTF/7a375afe9e227fb2896167232638af07.jpg"
+    },
     { title: "INDUSTRY", id: "03", desc: "The era of mechanical progress." },
     { title: "FUTURE", id: "04", desc: "Dimensional transcendence." },
   ];
@@ -472,16 +481,27 @@ const Page3MultiDimension = () => {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="group relative border border-white/10 p-8 flex flex-col justify-between hover:bg-white/5 transition-colors cursor-pointer"
+            className="group relative border border-white/10 p-8 flex flex-col justify-between hover:bg-white/5 transition-colors cursor-pointer overflow-hidden"
           >
-            <span className="font-display text-[60px] font-bold opacity-10 group-hover:opacity-100 group-hover:text-poster-accent transition-all">
+            {card.image && (
+              <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
+                <img 
+                  src={card.image} 
+                  alt={card.title} 
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-black/40" />
+              </div>
+            )}
+            <span className="font-display text-[60px] font-bold opacity-10 group-hover:opacity-100 group-hover:text-poster-accent transition-all z-10">
               {card.id}
             </span>
-            <div>
+            <div className="z-10">
               <h3 className="text-4xl font-display uppercase mb-4 glow-hover">{card.title}</h3>
               <p className="micro-label opacity-40 group-hover:opacity-100 transition-opacity">{card.desc}</p>
             </div>
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-poster-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-poster-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left z-10" />
           </motion.div>
         ))}
       </div>
