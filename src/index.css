@@ -7,7 +7,7 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --color-poster-bg: #0a0a0a;
   --color-poster-fg: #ffffff;
-  --color-poster-accent: #00d4ff;
+  --color-poster-accent: #00ff00;
 }
 
 @layer base {
@@ -102,8 +102,8 @@
   @apply border border-white/20;
 }
 
-.glow-cyan {
-  text-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+.glow-green {
+  text-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
 }
 
 .poster-gradient {

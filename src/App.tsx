@@ -44,7 +44,7 @@ const MouseGlow = () => {
     <motion.div
       className="fixed top-0 left-0 w-[800px] h-[800px] pointer-events-none z-[150] rounded-full"
       style={{
-        background: 'radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(0, 255, 0, 0.12) 0%, transparent 70%)',
         mixBlendMode: 'screen',
       }}
       animate={{
@@ -126,12 +126,41 @@ const GlitchEffect = () => (
       transition={{ duration: 0.1, repeat: 5 }}
     />
     <motion.div 
-      className="absolute inset-0 bg-blue-500/10 mix-blend-screen"
+      className="absolute inset-0 bg-green-500/10 mix-blend-screen"
       animate={{ x: [5, -5, 3, -3, 0], y: [-2, 2, -1, 1, 0] }}
       transition={{ duration: 0.1, repeat: 5 }}
     />
     {/* Static Noise */}
     <div className="absolute inset-0 opacity-20 bg-[url('https://picsum.photos/seed/noise/400/400')] bg-repeat" />
+  </motion.div>
+);
+
+const RippleEffect = () => (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: [0, 1, 1, 0] }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 1.2, times: [0, 0.2, 0.8, 1] }}
+    className="fixed inset-0 z-[200] pointer-events-none"
+  >
+    <svg className="absolute inset-0 w-full h-full">
+      <filter id="rippleFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.01 0.05" numOctaves="3" result="noise">
+          <animate attributeName="baseFrequency" values="0.01 0.05; 0.05 0.1; 0.01 0.05" dur="1.2s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="150" />
+      </filter>
+    </svg>
+    <div 
+      className="absolute inset-0 bg-white/5 backdrop-blur-[10px]" 
+      style={{ filter: 'url(#rippleFilter)' }} 
+    />
+    {/* Additional overlay to enhance the "liquid" feel */}
+    <motion.div 
+      className="absolute inset-0 bg-poster-accent/5 mix-blend-overlay"
+      animate={{ opacity: [0, 0.3, 0] }}
+      transition={{ duration: 1.2 }}
+    />
   </motion.div>
 );
 
@@ -451,7 +480,8 @@ const Page3MultiDimension = () => {
     { 
       title: "JURASSIC", 
       id: "01", 
-      desc: "The dawn of biological dominance."
+      desc: "The dawn of biological dominance.",
+      image: "https://i.postimg.cc/hj634JTF/06eb6e065b528abd1782c93b211ef2b4.jpg"
     },
     { 
       title: "MAYA", 
@@ -459,8 +489,18 @@ const Page3MultiDimension = () => {
       desc: "Celestial alignment and ritual.",
       image: "https://i.postimg.cc/5NMCcxTF/7a375afe9e227fb2896167232638af07.jpg"
     },
-    { title: "INDUSTRY", id: "03", desc: "The era of mechanical progress." },
-    { title: "FUTURE", id: "04", desc: "Dimensional transcendence." },
+    { 
+      title: "INDUSTRY", 
+      id: "03", 
+      desc: "The era of mechanical progress.",
+      image: "https://i.postimg.cc/L88k79g0/4d0c46aa1a979b43964b8035a6658164.jpg"
+    },
+    { 
+      title: "FUTURE", 
+      id: "04", 
+      desc: "Dimensional transcendence.",
+      image: "https://i.postimg.cc/G2wycdtM/a9261c4ba6dcf3ffb7b17a39acd972d4.jpg"
+    },
   ];
 
   return (
@@ -513,9 +553,9 @@ const Page4WorldEntry = () => {
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-black relative overflow-hidden">
       <CornerBrackets />
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/space/1920/1080')] bg-cover bg-center grayscale" />
-        <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 opacity-50">
+        <div className="absolute inset-0 bg-[url('https://i.postimg.cc/qMTgg1kz/aizhen161-two-astronauts-a2f0fd6d-ad7c-4e79-8b46-bdae8319629d-(1).png')] bg-cover bg-center grayscale" />
+        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       <div className="z-10 grid grid-cols-1 md:grid-cols-2 gap-20 max-w-7xl px-10">
@@ -625,6 +665,7 @@ export default function App() {
   const [isScrolling, setIsScrolling] = useState(false);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isGlitching, setIsGlitching] = useState(false);
+  const [isRippling, setIsRippling] = useState(false);
   const totalFrames = 73;
 
   // Preload images for Page 2
@@ -749,6 +790,12 @@ export default function App() {
         setTimeout(() => setIsGlitching(false), 800);
       }
 
+      // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
+      if ((currentPage === 2 && next === 3) || (currentPage === 3 && next === 2)) {
+        setIsRippling(true);
+        setTimeout(() => setIsRippling(false), 1200);
+      }
+
       setCurrentPage(next);
       setTimeout(() => setIsScrolling(false), 1200);
     } else if (e.deltaY < -50 && currentPage > 0) {
@@ -759,6 +806,12 @@ export default function App() {
       if ((currentPage === 2 && prev === 1) || (currentPage === 1 && prev === 2)) {
         setIsGlitching(true);
         setTimeout(() => setIsGlitching(false), 800);
+      }
+
+      // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
+      if ((currentPage === 3 && prev === 2) || (currentPage === 2 && prev === 3)) {
+        setIsRippling(true);
+        setTimeout(() => setIsRippling(false), 1200);
       }
 
       setCurrentPage(prev);
@@ -784,6 +837,7 @@ export default function App() {
 
       <AnimatePresence>
         {isGlitching && <GlitchEffect />}
+        {isRippling && <RippleEffect />}
       </AnimatePresence>
 
       {/* Navigation Indicators */}
