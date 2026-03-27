@@ -45,7 +45,7 @@
     background-image: 
       linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 100px 100px;
+    background-size: 60px 60px;
     z-index: 1;
     pointer-events: none;
   }
@@ -108,4 +108,49 @@
 
 .poster-gradient {
   background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+}
+
+@keyframes glitch-anim {
+  0% {
+    text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.05em -0.025em 0 rgba(0,255,255,0.75);
+    transform: translate(0);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 rgba(255,0,0,0.75), -0.05em -0.025em 0 rgba(0,255,255,0.75);
+    transform: translate(0);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.75), 0.025em 0.025em 0 rgba(0,255,255,0.75);
+    transform: translate(-2px, 1px);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 rgba(255,0,0,0.75), 0.025em 0.025em 0 rgba(0,255,255,0.75);
+    transform: translate(-2px, 1px);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.75), 0.05em 0 0 rgba(0,255,255,0.75);
+    transform: translate(2px, -1px);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 rgba(255,0,0,0.75), 0.05em 0 0 rgba(0,255,255,0.75);
+    transform: translate(2px, -1px);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 rgba(255,0,0,0.75), -0.025em -0.025em 0 rgba(0,255,255,0.75);
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-horizontal {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.glitch-text {
+  animation: glitch-anim 2s infinite linear alternate-reverse, glitch-horizontal 0.2s infinite linear;
+}
+
+.glitch-text-subtle {
+  animation: glitch-anim 3s infinite linear alternate-reverse, glitch-horizontal 0.4s infinite linear;
 }

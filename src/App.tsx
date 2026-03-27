@@ -22,13 +22,6 @@ const CornerBrackets = () => (
   </div>
 );
 
-const RecMarker = () => (
-  <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] flex items-center gap-2 pointer-events-none opacity-40">
-    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-    <span className="micro-label">REC</span>
-  </div>
-);
-
 const MouseGlow = () => {
   const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
 
@@ -98,40 +91,37 @@ const GlitchEffect = () => (
     initial={{ opacity: 0 }}
     animate={{ opacity: [0, 1, 0.8, 1, 0] }}
     exit={{ opacity: 0 }}
-    transition={{ duration: 0.6, times: [0, 0.1, 0.3, 0.5, 1] }}
-    className="fixed inset-0 z-[200] pointer-events-none bg-black/20 backdrop-blur-[2px]"
+    transition={{ duration: 0.4, times: [0, 0.2, 0.4, 0.6, 1] }}
+    className="fixed inset-0 z-[200] pointer-events-none bg-black/10 backdrop-blur-[1px]"
   >
-    {/* Horizontal Glitch Bars */}
-    {Array.from({ length: 12 }).map((_, i) => (
+    {/* Horizontal Glitch Bars - Reduced count and simplified */}
+    {Array.from({ length: 6 }).map((_, i) => (
       <motion.div
         key={i}
-        className="absolute w-full bg-poster-accent/40 mix-blend-screen"
-        initial={{ top: `${Math.random() * 100}%`, height: `${Math.random() * 40}px`, x: "-100%" }}
+        className="absolute w-full bg-poster-accent/30 mix-blend-screen"
+        initial={{ top: `${Math.random() * 100}%`, height: `${Math.random() * 20}px`, x: "-100%" }}
         animate={{ 
           x: ["-100%", "100%"],
-          opacity: [0, 0.8, 0]
+          opacity: [0, 0.6, 0]
         }}
         transition={{ 
-          duration: 0.15, 
-          delay: Math.random() * 0.4,
-          repeat: 2,
-          repeatType: "reverse"
+          duration: 0.1, 
+          delay: Math.random() * 0.2,
+          repeat: 1
         }}
       />
     ))}
     {/* RGB Split Overlay */}
     <motion.div 
-      className="absolute inset-0 bg-red-500/10 mix-blend-screen"
-      animate={{ x: [-5, 5, -3, 3, 0], y: [2, -2, 1, -1, 0] }}
-      transition={{ duration: 0.1, repeat: 5 }}
+      className="absolute inset-0 bg-red-500/5 mix-blend-screen"
+      animate={{ x: [-2, 2, 0], y: [1, -1, 0] }}
+      transition={{ duration: 0.1, repeat: 3 }}
     />
     <motion.div 
-      className="absolute inset-0 bg-green-500/10 mix-blend-screen"
-      animate={{ x: [5, -5, 3, -3, 0], y: [-2, 2, -1, 1, 0] }}
-      transition={{ duration: 0.1, repeat: 5 }}
+      className="absolute inset-0 bg-green-500/5 mix-blend-screen"
+      animate={{ x: [2, -2, 0], y: [-1, 1, 0] }}
+      transition={{ duration: 0.1, repeat: 3 }}
     />
-    {/* Static Noise */}
-    <div className="absolute inset-0 opacity-20 bg-[url('https://picsum.photos/seed/noise/400/400')] bg-repeat" />
   </motion.div>
 );
 
@@ -217,6 +207,7 @@ const Page1Terminal = ({ onNext }: { onNext: () => void }) => {
     <div className="h-screen w-screen flex flex-col bg-black p-12 relative overflow-hidden terminal-text">
       <div className="absolute inset-0 noise-overlay opacity-20" />
       <div className="absolute inset-0 technical-lines opacity-30" />
+      <GridPattern />
       
       <div className="z-10 flex flex-col h-full max-w-4xl mx-auto w-full">
         <div className="flex-grow space-y-1 overflow-hidden pt-10">
@@ -268,83 +259,84 @@ const Page1Terminal = ({ onNext }: { onNext: () => void }) => {
   );
 };
 
+const FRAME_URLS = [
+  "https://i.postimg.cc/T2NnDqWM/wei-biao-ti-10000.png",
+  "https://i.postimg.cc/CMrbqHfp/wei-biao-ti-10001.png",
+  "https://i.postimg.cc/WpY0k6JP/wei-biao-ti-10002.png",
+  "https://i.postimg.cc/RCpwHQnB/wei-biao-ti-10003.png",
+  "https://i.postimg.cc/bYV1tH2N/wei-biao-ti-10004.png",
+  "https://i.postimg.cc/MZ31QbjG/wei-biao-ti-10005.png",
+  "https://i.postimg.cc/pVcKFYny/wei-biao-ti-10006.png",
+  "https://i.postimg.cc/kMYWbFt4/wei-biao-ti-10007.png",
+  "https://i.postimg.cc/NGCRH7ry/wei-biao-ti-10008.png",
+  "https://i.postimg.cc/3rf2vCDD/wei-biao-ti-10009.png",
+  "https://i.postimg.cc/VLSnBrjf/wei-biao-ti-10010.png",
+  "https://i.postimg.cc/KcptMrg3/wei-biao-ti-10011.png",
+  "https://i.postimg.cc/9F4ZtRG0/wei-biao-ti-10012.png",
+  "https://i.postimg.cc/J4yZcDbt/wei-biao-ti-10013.png",
+  "https://i.postimg.cc/rFdxC0Sm/wei-biao-ti-10014.png",
+  "https://i.postimg.cc/SNXC72WJ/wei-biao-ti-10015.png",
+  "https://i.postimg.cc/ncsBYjvm/wei-biao-ti-10016.png",
+  "https://i.postimg.cc/5NHLqYwB/wei-biao-ti-10017.png",
+  "https://i.postimg.cc/8PFMBJhm/wei-biao-ti-10018.png",
+  "https://i.postimg.cc/KvKBrknf/wei-biao-ti-10019.png",
+  "https://i.postimg.cc/L6rfy9TB/wei-biao-ti-10020.png",
+  "https://i.postimg.cc/WbQr9Nnw/wei-biao-ti-10021.png",
+  "https://i.postimg.cc/wTSJWqV2/wei-biao-ti-10022.png",
+  "https://i.postimg.cc/VL3M7fRR/wei-biao-ti-10023.png",
+  "https://i.postimg.cc/kXk8jJcY/wei-biao-ti-10024.png",
+  "https://i.postimg.cc/sDtSnjc0/wei-biao-ti-10025.png",
+  "https://i.postimg.cc/Hsf5SY2F/wei-biao-ti-10026.png",
+  "https://i.postimg.cc/9FvTxmpK/wei-biao-ti-10027.png",
+  "https://i.postimg.cc/TYZmkd9z/wei-biao-ti-10028.png",
+  "https://i.postimg.cc/65DRHWcJ/wei-biao-ti-10029.png",
+  "https://i.postimg.cc/X7TF2jLb/wei-biao-ti-10030.png",
+  "https://i.postimg.cc/Hsf5SYzH/wei-biao-ti-10031.png",
+  "https://i.postimg.cc/rFvWhVj8/wei-biao-ti-10032.png",
+  "https://i.postimg.cc/KvdL9GfG/wei-biao-ti-10033.png",
+  "https://i.postimg.cc/4xVcqD2k/wei-biao-ti-10034.png",
+  "https://i.postimg.cc/VkntpxGx/wei-biao-ti-10035.png",
+  "https://i.postimg.cc/cLw32pkx/wei-biao-ti-10036.png",
+  "https://i.postimg.cc/Z5pN2GsT/wei-biao-ti-10037.png",
+  "https://i.postimg.cc/3xmGVsfr/wei-biao-ti-10038.png",
+  "https://i.postimg.cc/FH3S8MCs/wei-biao-ti-10039.png",
+  "https://i.postimg.cc/Qd17w2YH/wei-biao-ti-10040.png",
+  "https://i.postimg.cc/rwx43BZd/wei-biao-ti-10041.png",
+  "https://i.postimg.cc/T3gbFzN5/wei-biao-ti-10042.png",
+  "https://i.postimg.cc/FH3S8MC3/wei-biao-ti-10043.png",
+  "https://i.postimg.cc/8CGvSZxs/wei-biao-ti-10044.png",
+  "https://i.postimg.cc/JzZXvfYb/wei-biao-ti-10045.png",
+  "https://i.postimg.cc/q7rKT1Wz/wei-biao-ti-10046.png",
+  "https://i.postimg.cc/xdQm26Bk/wei-biao-ti-10047.png",
+  "https://i.postimg.cc/VNwt8K20/wei-biao-ti-10048.png",
+  "https://i.postimg.cc/43GcgWjc/wei-biao-ti-10049.png",
+  "https://i.postimg.cc/PqHDjS08/wei-biao-ti-10050.png",
+  "https://i.postimg.cc/YS7FHdT6/wei-biao-ti-10051.png",
+  "https://i.postimg.cc/43GcgWjv/wei-biao-ti-10052.png",
+  "https://i.postimg.cc/yNKRHL2y/wei-biao-ti-10053.png",
+  "https://i.postimg.cc/7L4zkKjM/wei-biao-ti-10054.png",
+  "https://i.postimg.cc/GpRDCX6X/wei-biao-ti-10055.png",
+  "https://i.postimg.cc/xdQm26Bs/wei-biao-ti-10056.png",
+  "https://i.postimg.cc/TPxb6tBs/wei-biao-ti-10057.png",
+  "https://i.postimg.cc/9f29hLsS/wei-biao-ti-10058.png",
+  "https://i.postimg.cc/HLtysQC3/wei-biao-ti-10059.png",
+  "https://i.postimg.cc/KY5Mvnyp/wei-biao-ti-10060.png",
+  "https://i.postimg.cc/hG0dP9qN/wei-biao-ti-10061.png",
+  "https://i.postimg.cc/0NCw2pqF/wei-biao-ti-10062.png",
+  "https://i.postimg.cc/LsV16zMc/wei-biao-ti-10063.png",
+  "https://i.postimg.cc/rp9rFSk2/wei-biao-ti-10064.png",
+  "https://i.postimg.cc/s2JhDpry/wei-biao-ti-10065.png",
+  "https://i.postimg.cc/bvRtNQhp/wei-biao-ti-10066.png",
+  "https://i.postimg.cc/cJcn4QS1/wei-biao-ti-10067.png",
+  "https://i.postimg.cc/g0KZkvW2/wei-biao-ti-10068.png",
+  "https://i.postimg.cc/8Cb6PhS5/wei-biao-ti-10069.png",
+  "https://i.postimg.cc/k4XtVBJd/wei-biao-ti-10070.png",
+  "https://i.postimg.cc/k4XtVBJm/wei-biao-ti-10071.png",
+  "https://i.postimg.cc/hjP7JfDn/wei-biao-ti-10072.png"
+];
+
 const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
-  const frameUrls = [
-    "https://i.postimg.cc/T2NnDqWM/wei-biao-ti-10000.png",
-    "https://i.postimg.cc/CMrbqHfp/wei-biao-ti-10001.png",
-    "https://i.postimg.cc/WpY0k6JP/wei-biao-ti-10002.png",
-    "https://i.postimg.cc/RCpwHQnB/wei-biao-ti-10003.png",
-    "https://i.postimg.cc/bYV1tH2N/wei-biao-ti-10004.png",
-    "https://i.postimg.cc/MZ31QbjG/wei-biao-ti-10005.png",
-    "https://i.postimg.cc/pVcKFYny/wei-biao-ti-10006.png",
-    "https://i.postimg.cc/kMYWbFt4/wei-biao-ti-10007.png",
-    "https://i.postimg.cc/NGCRH7ry/wei-biao-ti-10008.png",
-    "https://i.postimg.cc/3rf2vCDD/wei-biao-ti-10009.png",
-    "https://i.postimg.cc/VLSnBrjf/wei-biao-ti-10010.png",
-    "https://i.postimg.cc/KcptMrg3/wei-biao-ti-10011.png",
-    "https://i.postimg.cc/9F4ZtRG0/wei-biao-ti-10012.png",
-    "https://i.postimg.cc/J4yZcDbt/wei-biao-ti-10013.png",
-    "https://i.postimg.cc/rFdxC0Sm/wei-biao-ti-10014.png",
-    "https://i.postimg.cc/SNXC72WJ/wei-biao-ti-10015.png",
-    "https://i.postimg.cc/ncsBYjvm/wei-biao-ti-10016.png",
-    "https://i.postimg.cc/5NHLqYwB/wei-biao-ti-10017.png",
-    "https://i.postimg.cc/8PFMBJhm/wei-biao-ti-10018.png",
-    "https://i.postimg.cc/KvKBrknf/wei-biao-ti-10019.png",
-    "https://i.postimg.cc/L6rfy9TB/wei-biao-ti-10020.png",
-    "https://i.postimg.cc/WbQr9Nnw/wei-biao-ti-10021.png",
-    "https://i.postimg.cc/wTSJWqV2/wei-biao-ti-10022.png",
-    "https://i.postimg.cc/VL3M7fRR/wei-biao-ti-10023.png",
-    "https://i.postimg.cc/kXk8jJcY/wei-biao-ti-10024.png",
-    "https://i.postimg.cc/sDtSnjc0/wei-biao-ti-10025.png",
-    "https://i.postimg.cc/Hsf5SY2F/wei-biao-ti-10026.png",
-    "https://i.postimg.cc/9FvTxmpK/wei-biao-ti-10027.png",
-    "https://i.postimg.cc/TYZmkd9z/wei-biao-ti-10028.png",
-    "https://i.postimg.cc/65DRHWcJ/wei-biao-ti-10029.png",
-    "https://i.postimg.cc/X7TF2jLb/wei-biao-ti-10030.png",
-    "https://i.postimg.cc/Hsf5SYzH/wei-biao-ti-10031.png",
-    "https://i.postimg.cc/rFvWhVj8/wei-biao-ti-10032.png",
-    "https://i.postimg.cc/KvdL9GfG/wei-biao-ti-10033.png",
-    "https://i.postimg.cc/4xVcqD2k/wei-biao-ti-10034.png",
-    "https://i.postimg.cc/VkntpxGx/wei-biao-ti-10035.png",
-    "https://i.postimg.cc/cLw32pkx/wei-biao-ti-10036.png",
-    "https://i.postimg.cc/Z5pN2GsT/wei-biao-ti-10037.png",
-    "https://i.postimg.cc/3xmGVsfr/wei-biao-ti-10038.png",
-    "https://i.postimg.cc/FH3S8MCs/wei-biao-ti-10039.png",
-    "https://i.postimg.cc/Qd17w2YH/wei-biao-ti-10040.png",
-    "https://i.postimg.cc/rwx43BZd/wei-biao-ti-10041.png",
-    "https://i.postimg.cc/T3gbFzN5/wei-biao-ti-10042.png",
-    "https://i.postimg.cc/FH3S8MC3/wei-biao-ti-10043.png",
-    "https://i.postimg.cc/8CGvSZxs/wei-biao-ti-10044.png",
-    "https://i.postimg.cc/JzZXvfYb/wei-biao-ti-10045.png",
-    "https://i.postimg.cc/q7rKT1Wz/wei-biao-ti-10046.png",
-    "https://i.postimg.cc/xdQm26Bk/wei-biao-ti-10047.png",
-    "https://i.postimg.cc/VNwt8K20/wei-biao-ti-10048.png",
-    "https://i.postimg.cc/43GcgWjc/wei-biao-ti-10049.png",
-    "https://i.postimg.cc/PqHDjS08/wei-biao-ti-10050.png",
-    "https://i.postimg.cc/YS7FHdT6/wei-biao-ti-10051.png",
-    "https://i.postimg.cc/43GcgWjv/wei-biao-ti-10052.png",
-    "https://i.postimg.cc/yNKRHL2y/wei-biao-ti-10053.png",
-    "https://i.postimg.cc/7L4zkKjM/wei-biao-ti-10054.png",
-    "https://i.postimg.cc/GpRDCX6X/wei-biao-ti-10055.png",
-    "https://i.postimg.cc/xdQm26Bs/wei-biao-ti-10056.png",
-    "https://i.postimg.cc/TPxb6tBs/wei-biao-ti-10057.png",
-    "https://i.postimg.cc/9f29hLsS/wei-biao-ti-10058.png",
-    "https://i.postimg.cc/HLtysQC3/wei-biao-ti-10059.png",
-    "https://i.postimg.cc/KY5Mvnyp/wei-biao-ti-10060.png",
-    "https://i.postimg.cc/hG0dP9qN/wei-biao-ti-10061.png",
-    "https://i.postimg.cc/0NCw2pqF/wei-biao-ti-10062.png",
-    "https://i.postimg.cc/LsV16zMc/wei-biao-ti-10063.png",
-    "https://i.postimg.cc/rp9rFSk2/wei-biao-ti-10064.png",
-    "https://i.postimg.cc/s2JhDpry/wei-biao-ti-10065.png",
-    "https://i.postimg.cc/bvRtNQhp/wei-biao-ti-10066.png",
-    "https://i.postimg.cc/cJcn4QS1/wei-biao-ti-10067.png",
-    "https://i.postimg.cc/g0KZkvW2/wei-biao-ti-10068.png",
-    "https://i.postimg.cc/8Cb6PhS5/wei-biao-ti-10069.png",
-    "https://i.postimg.cc/k4XtVBJd/wei-biao-ti-10070.png",
-    "https://i.postimg.cc/k4XtVBJm/wei-biao-ti-10071.png",
-    "https://i.postimg.cc/hjP7JfDn/wei-biao-ti-10072.png"
-  ];
-  const totalFrames = frameUrls.length;
+  const totalFrames = FRAME_URLS.length;
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-black relative overflow-hidden">
@@ -352,7 +344,7 @@ const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
       <div className="absolute inset-0 z-0">
         <div className="w-full h-full relative">
           <img 
-            src={frameUrls[frameIndex] || frameUrls[0]} 
+            src={FRAME_URLS[frameIndex] || FRAME_URLS[0]} 
             alt={`Cosmos Frame ${frameIndex}`} 
             className="w-full h-full object-cover grayscale-[0.2] brightness-[0.7]"
             referrerPolicy="no-referrer"
@@ -381,7 +373,7 @@ const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
         }}
       >
         <img 
-          src="https://i.postimg.cc/KvnqrH79/宇航员_1.png" 
+          src="https://i.postimg.cc/6px5twdH/yu-hang-yuan-shou-bu-xiu-fu.png" 
           alt="Astronaut" 
           className="w-64 md:w-80 lg:w-96 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
           referrerPolicy="no-referrer"
@@ -389,7 +381,6 @@ const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
       </motion.div>
 
       <CornerBrackets />
-      <RecMarker />
       
       <div className="z-10 w-full max-w-7xl px-12 flex flex-col items-start">
         <AnimatePresence>
@@ -595,7 +586,7 @@ const Page5RealCar = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-7xl">
           <div className="col-span-2 relative aspect-video border border-white/10 overflow-hidden group">
             <img 
-              src="https://picsum.photos/seed/car-future/1200/675" 
+              src="https://i.postimg.cc/L5RX6Dpv/b14570979542819f1b88de18df83d19b.jpg" 
               alt="Future Mobility" 
               className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
               referrerPolicy="no-referrer"
@@ -606,7 +597,7 @@ const Page5RealCar = () => {
           <div className="flex flex-col justify-center space-y-8">
             <div className="space-y-2">
               <span className="micro-label text-poster-accent glow-hover">Product Focus</span>
-              <h2 className="text-7xl font-display uppercase glow-hover">XPENG P7+</h2>
+              <h2 className="text-7xl font-display uppercase glow-hover">Future Humans</h2>
             </div>
             <p className="text-xs tracking-[0.2em] uppercase opacity-40 leading-relaxed glow-hover">
               The manifestation of future intelligence.
@@ -624,36 +615,130 @@ const Page5RealCar = () => {
   );
 };
 
+const EndPageOverlay = () => {
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className="fixed inset-0 z-[201] flex flex-col items-center justify-center text-white bg-cover bg-center bg-no-repeat overflow-hidden"
+      style={{ backgroundImage: 'url("https://i.postimg.cc/SKHBHng5/jimeng-2026-03-27-1429-gai-cheng-heng44ban-zhong-jian-liu-chu-kong-jian-tu-pian1.jpg")' }}
+    >
+      {/* Black transparent overlay */}
+      <div className="absolute inset-0 bg-black/60 z-0" />
+
+      {/* Mouse Glow */}
+      <motion.div
+        className="absolute top-0 left-0 w-[800px] h-[800px] pointer-events-none z-[1] rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%)',
+          mixBlendMode: 'screen',
+        }}
+        animate={{
+          x: mousePos.x - 400,
+          y: mousePos.y - 400,
+        }}
+        transition={{ type: 'spring', damping: 50, stiffness: 300, mass: 0.5 }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center">
+        <motion.h1 
+          initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
+          className="text-[12vw] poster-title glow-hover mb-12"
+        >
+          THE END
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 2, delay: 2.5, ease: "easeOut" }}
+          className="text-lg md:text-2xl font-sans tracking-widest text-white/70 glow-hover"
+        >
+          特别鸣谢指导老师 — 颜宇骁（VIK）
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+};
+
 const Page6FutureCivilization = () => {
+  const [isClosing, setIsClosing] = useState(false);
+  const [showEndText, setShowEndText] = useState(false);
+
+  const handleTitleClick = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowEndText(true);
+    }, 1200); // Wait for eyelids to close
+  };
+
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center bg-black relative overflow-hidden">
       <CornerBrackets />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0%,transparent_100%)]" />
+      <div className="absolute inset-0 opacity-40">
+        <div className="absolute inset-0 bg-[url('https://i.postimg.cc/xjhfYZh7/a62120044315970ca7decb8633dabd4384764b321234a-9BYNpb-fw658webp.webp')] bg-cover bg-center grayscale" />
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
       
       <div className="z-10 text-center space-y-12 max-w-5xl px-10">
         <div className="space-y-4">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-[14vw] poster-title glow-hover"
+            className="text-[14vw] poster-title glow-hover cursor-pointer hover:text-white/80 transition-colors"
+            onClick={handleTitleClick}
+            title="Click to close eyes"
           >
             THE FUTURE
           </motion.h2>
           <div className="flex items-center justify-center gap-6">
             <div className="h-[1px] w-20 bg-white/20" />
-            <p className="micro-label glow-hover">Civilization Type I</p>
+            <p className="micro-label glow-hover">XPENG GEP DESIGN</p>
             <div className="h-[1px] w-20 bg-white/20" />
           </div>
         </div>
-
-        <motion.button
-          whileHover={{ scale: 1.05, backgroundColor: "white", color: "black" }}
-          whileTap={{ scale: 0.95 }}
-          className="mt-12 px-20 py-5 border border-white font-mono text-xs font-bold tracking-[0.8em] uppercase transition-all duration-300"
-        >
-          Explore More
-        </motion.button>
       </div>
+
+      {/* Eye Closing Overlay */}
+      <AnimatePresence>
+        {isClosing && (
+          <div className="fixed inset-0 z-[200] pointer-events-none flex flex-col justify-between">
+            {/* Top Eyelid */}
+            <motion.div 
+              initial={{ height: "0%", borderBottomLeftRadius: "50% 20%", borderBottomRightRadius: "50% 20%" }}
+              animate={{ height: "51%", borderBottomLeftRadius: "0%", borderBottomRightRadius: "0%" }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full bg-black origin-top"
+            />
+            {/* Bottom Eyelid */}
+            <motion.div 
+              initial={{ height: "0%", borderTopLeftRadius: "50% 20%", borderTopRightRadius: "50% 20%" }}
+              animate={{ height: "51%", borderTopLeftRadius: "0%", borderTopRightRadius: "0%" }}
+              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full bg-black origin-bottom"
+            />
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* The End Text */}
+      <AnimatePresence>
+        {showEndText && <EndPageOverlay />}
+      </AnimatePresence>
     </div>
   );
 };
@@ -745,92 +830,118 @@ export default function App() {
       "https://i.postimg.cc/k4XtVBJm/wei-biao-ti-10071.png",
       "https://i.postimg.cc/hjP7JfDn/wei-biao-ti-10072.png"
     ];
-    frameUrls.forEach(url => {
-      const img = new Image();
-      img.src = url;
-    });
+    const preloadImages = async () => {
+      // Load first 10 immediately
+      for (let i = 0; i < Math.min(10, FRAME_URLS.length); i++) {
+        const img = new Image();
+        img.src = FRAME_URLS[i];
+      }
+      
+      // Load the rest in the background
+      setTimeout(() => {
+        for (let i = 10; i < FRAME_URLS.length; i++) {
+          const img = new Image();
+          img.src = FRAME_URLS[i];
+        }
+      }, 2000);
+    };
+    preloadImages();
   }, []);
 
-  const handleScroll = (e: WheelEvent) => {
-    if (isScrolling) return;
-
-    // Page 2 (index 1) has special scroll behavior for frames
-    if (currentPage === 1) {
-      // Increased sensitivity: map deltaY to frame changes
-      // Standard wheel delta is ~100. We want that to be around 2-3 frames for "speed"
-      const sensitivity = 40; 
-      const frameChange = Math.round(e.deltaY / sensitivity);
-
-      if (frameChange !== 0) {
-        setCurrentFrame(prev => {
-          const next = prev + frameChange;
-          return Math.max(0, Math.min(totalFrames - 1, next));
-        });
-        
-        // Stay on page 2 if we are still within the sequence bounds
-        if (e.deltaY > 0 && currentFrame < totalFrames - 1) return;
-        if (e.deltaY < 0 && currentFrame > 0) return;
-      } else if (Math.abs(e.deltaY) > 0) {
-        // For very small deltas (trackpads), ensure at least 1 frame change if significant
-        const smallStep = e.deltaY > 0 ? 1 : -1;
-        setCurrentFrame(prev => Math.max(0, Math.min(totalFrames - 1, prev + smallStep)));
-        if (e.deltaY > 0 && currentFrame < totalFrames - 1) return;
-        if (e.deltaY < 0 && currentFrame > 0) return;
-      }
-    }
-
-    // Normal page transitions
-    if (e.deltaY > 50 && currentPage < 5) {
-      const next = currentPage + 1;
-      setIsScrolling(true);
-      
-      // Trigger glitch if moving between 1 and 2 (Page 2 and 3)
-      if ((currentPage === 1 && next === 2) || (currentPage === 2 && next === 1)) {
-        setIsGlitching(true);
-        setTimeout(() => setIsGlitching(false), 800);
-      }
-
-      // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
-      if ((currentPage === 2 && next === 3) || (currentPage === 3 && next === 2)) {
-        setIsRippling(true);
-        setTimeout(() => setIsRippling(false), 1200);
-      }
-
-      setCurrentPage(next);
-      setTimeout(() => setIsScrolling(false), 1200);
-    } else if (e.deltaY < -50 && currentPage > 0) {
-      const prev = currentPage - 1;
-      setIsScrolling(true);
-
-      // Trigger glitch if moving between 1 and 2 (Page 2 and 3)
-      if ((currentPage === 2 && prev === 1) || (currentPage === 1 && prev === 2)) {
-        setIsGlitching(true);
-        setTimeout(() => setIsGlitching(false), 800);
-      }
-
-      // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
-      if ((currentPage === 3 && prev === 2) || (currentPage === 2 && prev === 3)) {
-        setIsRippling(true);
-        setTimeout(() => setIsRippling(false), 1200);
-      }
-
-      setCurrentPage(prev);
-      setTimeout(() => setIsScrolling(false), 1200);
-    }
-  };
+  const stateRef = useRef({ currentPage, isScrolling, currentFrame });
+  
+  useEffect(() => {
+    stateRef.current = { currentPage, isScrolling, currentFrame };
+  }, [currentPage, isScrolling, currentFrame]);
 
   useEffect(() => {
-    window.addEventListener('wheel', handleScroll);
+    const handleScroll = (e: WheelEvent) => {
+      const { currentPage, isScrolling, currentFrame } = stateRef.current;
+      if (isScrolling) return;
+
+      let nextFrame = currentFrame;
+
+      // Page 2 (index 1) has special scroll behavior for frames
+      if (currentPage === 1) {
+        const sensitivity = 30; 
+        const frameChange = Math.round(e.deltaY / sensitivity);
+
+        if (frameChange !== 0) {
+          nextFrame = Math.max(0, Math.min(totalFrames - 1, currentFrame + frameChange));
+        } else if (Math.abs(e.deltaY) > 0) {
+          const smallStep = e.deltaY > 0 ? 1 : -1;
+          nextFrame = Math.max(0, Math.min(totalFrames - 1, currentFrame + smallStep));
+        }
+
+        if (nextFrame !== currentFrame) {
+          setCurrentFrame(nextFrame);
+          stateRef.current.currentFrame = nextFrame;
+        }
+        
+        // Stay on page 2 if we are still within the sequence bounds
+        if (e.deltaY > 0 && nextFrame < totalFrames - 1) return;
+        if (e.deltaY < 0 && nextFrame > 0) return;
+      }
+
+      // Normal page transitions
+      const scrollThreshold = (currentPage === 1 && nextFrame === totalFrames - 1) ? 1 : 50;
+      
+      if (e.deltaY > scrollThreshold && currentPage < 5) {
+        const next = currentPage + 1;
+        setIsScrolling(true);
+        stateRef.current.isScrolling = true;
+        
+        // Trigger glitch if moving between 0 and 1 (Page 1 and 2) or 1 and 2 (Page 2 and 3)
+        if ((currentPage === 0 && next === 1) || (currentPage === 1 && next === 0) || (currentPage === 1 && next === 2) || (currentPage === 2 && next === 1)) {
+          setIsGlitching(true);
+          setTimeout(() => setIsGlitching(false), 500);
+        }
+
+        // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
+        if ((currentPage === 2 && next === 3) || (currentPage === 3 && next === 2)) {
+          setIsRippling(true);
+          setTimeout(() => setIsRippling(false), 800);
+        }
+
+        setCurrentPage(next);
+        setTimeout(() => {
+          setIsScrolling(false);
+          stateRef.current.isScrolling = false;
+        }, 800);
+      } else if (e.deltaY < -50 && currentPage > 0) {
+        const prev = currentPage - 1;
+        setIsScrolling(true);
+        stateRef.current.isScrolling = true;
+
+        // Trigger glitch if moving between 0 and 1 (Page 1 and 2) or 1 and 2 (Page 2 and 3)
+        if ((currentPage === 1 && prev === 0) || (currentPage === 0 && prev === 1) || (currentPage === 2 && prev === 1) || (currentPage === 1 && prev === 2)) {
+          setIsGlitching(true);
+          setTimeout(() => setIsGlitching(false), 500);
+        }
+
+        // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
+        if ((currentPage === 3 && prev === 2) || (currentPage === 2 && prev === 3)) {
+          setIsRippling(true);
+          setTimeout(() => setIsRippling(false), 800);
+        }
+
+        setCurrentPage(prev);
+        setTimeout(() => {
+          setIsScrolling(false);
+          stateRef.current.isScrolling = false;
+        }, 800);
+      }
+    };
+
+    window.addEventListener('wheel', handleScroll, { passive: false });
     return () => window.removeEventListener('wheel', handleScroll);
-  }, [currentPage, isScrolling]);
+  }, []);
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-black text-white">
       <MouseGlow />
       <NoiseOverlay />
       <TechnicalLines />
-      <GridPattern />
-      <RecMarker />
       
       <TechnicalHeader pageNum={currentPage + 1} />
       <TechnicalFooter />
@@ -859,16 +970,20 @@ export default function App() {
       </div>
 
       {/* Page Content */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.div
           key={currentPage}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="h-full w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className="absolute inset-0"
         >
-          {currentPage === 0 && <Page1Terminal onNext={() => setCurrentPage(1)} />}
+          {currentPage === 0 && <Page1Terminal onNext={() => {
+            setIsGlitching(true);
+            setTimeout(() => setIsGlitching(false), 500);
+            setCurrentPage(1);
+          }} />}
           {currentPage === 1 && <Page2BlackHole frameIndex={currentFrame} />}
           {currentPage === 2 && <Page3MultiDimension />}
           {currentPage === 3 && <Page4WorldEntry />}
