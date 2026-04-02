@@ -7,6 +7,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Rocket, Box, Cpu, Globe, Zap, Monitor, Sparkles, ChevronDown, Info, Plus } from 'lucide-react';
 
+const OTHER_IMAGES = [
+  "https://i.postimg.cc/6px5twdH/yu-hang-yuan-shou-bu-xiu-fu.png",
+  "https://i.postimg.cc/hj634JTF/06eb6e065b528abd1782c93b211ef2b4.jpg",
+  "https://i.postimg.cc/5NMCcxTF/7a375afe9e227fb2896167232638af07.jpg",
+  "https://i.postimg.cc/L88k79g0/4d0c46aa1a979b43964b8035a6658164.jpg",
+  "https://i.postimg.cc/G2wycdtM/a9261c4ba6dcf3ffb7b17a39acd972d4.jpg",
+  "https://i.postimg.cc/qMTgg1kz/aizhen161-two-astronauts-a2f0fd6d-ad7c-4e79-8b46-bdae8319629d-(1).png",
+  "https://i.postimg.cc/L5RX6Dpv/b14570979542819f1b88de18df83d19b.jpg",
+  "https://i.postimg.cc/xjhfYZh7/a62120044315970ca7decb8633dabd4384764b321234a-9BYNpb-fw658webp.webp",
+  "https://i.postimg.cc/SKHBHng5/jimeng-2026-03-27-1429-gai-cheng-heng44ban-zhong-jian-liu-chu-kong-jian-tu-pian1.jpg"
+];
+
 // --- Components ---
 
 const NoiseOverlay = () => <div className="noise-overlay" />;
@@ -156,9 +168,9 @@ const RippleEffect = () => (
 
 // --- Pages ---
 
-const Page1Terminal = ({ onNext }: { onNext: () => void }) => {
-  const [progress, setProgress] = useState(0);
+const Page1Terminal = ({ progress, onNext }: { progress: number, onNext: () => void }) => {
   const [logs, setLogs] = useState<string[]>([]);
+  const [logsFinished, setLogsFinished] = useState(false);
   
   const bootLogs = [
     "BIOS Version 1.0.4 - Cosmic Exploration Unit",
@@ -183,25 +195,19 @@ const Page1Terminal = ({ onNext }: { onNext: () => void }) => {
         logIndex++;
       } else {
         clearInterval(logInterval);
+        setLogsFinished(true);
       }
-    }, 250);
+    }, 150);
 
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          setTimeout(onNext, 800);
-          return 100;
-        }
-        return prev + 1.5;
-      });
-    }, 60);
+    return () => clearInterval(logInterval);
+  }, []);
 
-    return () => {
-      clearInterval(logInterval);
-      clearInterval(progressInterval);
-    };
-  }, [onNext]);
+  useEffect(() => {
+    if (progress >= 100 && logsFinished) {
+      const t = setTimeout(onNext, 800);
+      return () => clearTimeout(t);
+    }
+  }, [progress, logsFinished, onNext]);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-black p-12 relative overflow-hidden terminal-text">
@@ -260,79 +266,71 @@ const Page1Terminal = ({ onNext }: { onNext: () => void }) => {
 };
 
 const FRAME_URLS = [
-  "https://i.postimg.cc/T2NnDqWM/wei-biao-ti-10000.png",
-  "https://i.postimg.cc/CMrbqHfp/wei-biao-ti-10001.png",
-  "https://i.postimg.cc/WpY0k6JP/wei-biao-ti-10002.png",
-  "https://i.postimg.cc/RCpwHQnB/wei-biao-ti-10003.png",
-  "https://i.postimg.cc/bYV1tH2N/wei-biao-ti-10004.png",
-  "https://i.postimg.cc/MZ31QbjG/wei-biao-ti-10005.png",
-  "https://i.postimg.cc/pVcKFYny/wei-biao-ti-10006.png",
-  "https://i.postimg.cc/kMYWbFt4/wei-biao-ti-10007.png",
-  "https://i.postimg.cc/NGCRH7ry/wei-biao-ti-10008.png",
-  "https://i.postimg.cc/3rf2vCDD/wei-biao-ti-10009.png",
-  "https://i.postimg.cc/VLSnBrjf/wei-biao-ti-10010.png",
-  "https://i.postimg.cc/KcptMrg3/wei-biao-ti-10011.png",
-  "https://i.postimg.cc/9F4ZtRG0/wei-biao-ti-10012.png",
-  "https://i.postimg.cc/J4yZcDbt/wei-biao-ti-10013.png",
-  "https://i.postimg.cc/rFdxC0Sm/wei-biao-ti-10014.png",
-  "https://i.postimg.cc/SNXC72WJ/wei-biao-ti-10015.png",
-  "https://i.postimg.cc/ncsBYjvm/wei-biao-ti-10016.png",
-  "https://i.postimg.cc/5NHLqYwB/wei-biao-ti-10017.png",
-  "https://i.postimg.cc/8PFMBJhm/wei-biao-ti-10018.png",
-  "https://i.postimg.cc/KvKBrknf/wei-biao-ti-10019.png",
-  "https://i.postimg.cc/L6rfy9TB/wei-biao-ti-10020.png",
-  "https://i.postimg.cc/WbQr9Nnw/wei-biao-ti-10021.png",
-  "https://i.postimg.cc/wTSJWqV2/wei-biao-ti-10022.png",
-  "https://i.postimg.cc/VL3M7fRR/wei-biao-ti-10023.png",
-  "https://i.postimg.cc/kXk8jJcY/wei-biao-ti-10024.png",
-  "https://i.postimg.cc/sDtSnjc0/wei-biao-ti-10025.png",
-  "https://i.postimg.cc/Hsf5SY2F/wei-biao-ti-10026.png",
-  "https://i.postimg.cc/9FvTxmpK/wei-biao-ti-10027.png",
-  "https://i.postimg.cc/TYZmkd9z/wei-biao-ti-10028.png",
-  "https://i.postimg.cc/65DRHWcJ/wei-biao-ti-10029.png",
-  "https://i.postimg.cc/X7TF2jLb/wei-biao-ti-10030.png",
-  "https://i.postimg.cc/Hsf5SYzH/wei-biao-ti-10031.png",
-  "https://i.postimg.cc/rFvWhVj8/wei-biao-ti-10032.png",
-  "https://i.postimg.cc/KvdL9GfG/wei-biao-ti-10033.png",
-  "https://i.postimg.cc/4xVcqD2k/wei-biao-ti-10034.png",
-  "https://i.postimg.cc/VkntpxGx/wei-biao-ti-10035.png",
-  "https://i.postimg.cc/cLw32pkx/wei-biao-ti-10036.png",
-  "https://i.postimg.cc/Z5pN2GsT/wei-biao-ti-10037.png",
-  "https://i.postimg.cc/3xmGVsfr/wei-biao-ti-10038.png",
-  "https://i.postimg.cc/FH3S8MCs/wei-biao-ti-10039.png",
-  "https://i.postimg.cc/Qd17w2YH/wei-biao-ti-10040.png",
-  "https://i.postimg.cc/rwx43BZd/wei-biao-ti-10041.png",
-  "https://i.postimg.cc/T3gbFzN5/wei-biao-ti-10042.png",
-  "https://i.postimg.cc/FH3S8MC3/wei-biao-ti-10043.png",
-  "https://i.postimg.cc/8CGvSZxs/wei-biao-ti-10044.png",
-  "https://i.postimg.cc/JzZXvfYb/wei-biao-ti-10045.png",
-  "https://i.postimg.cc/q7rKT1Wz/wei-biao-ti-10046.png",
-  "https://i.postimg.cc/xdQm26Bk/wei-biao-ti-10047.png",
-  "https://i.postimg.cc/VNwt8K20/wei-biao-ti-10048.png",
-  "https://i.postimg.cc/43GcgWjc/wei-biao-ti-10049.png",
-  "https://i.postimg.cc/PqHDjS08/wei-biao-ti-10050.png",
-  "https://i.postimg.cc/YS7FHdT6/wei-biao-ti-10051.png",
-  "https://i.postimg.cc/43GcgWjv/wei-biao-ti-10052.png",
-  "https://i.postimg.cc/yNKRHL2y/wei-biao-ti-10053.png",
-  "https://i.postimg.cc/7L4zkKjM/wei-biao-ti-10054.png",
-  "https://i.postimg.cc/GpRDCX6X/wei-biao-ti-10055.png",
-  "https://i.postimg.cc/xdQm26Bs/wei-biao-ti-10056.png",
-  "https://i.postimg.cc/TPxb6tBs/wei-biao-ti-10057.png",
-  "https://i.postimg.cc/9f29hLsS/wei-biao-ti-10058.png",
-  "https://i.postimg.cc/HLtysQC3/wei-biao-ti-10059.png",
-  "https://i.postimg.cc/KY5Mvnyp/wei-biao-ti-10060.png",
-  "https://i.postimg.cc/hG0dP9qN/wei-biao-ti-10061.png",
-  "https://i.postimg.cc/0NCw2pqF/wei-biao-ti-10062.png",
-  "https://i.postimg.cc/LsV16zMc/wei-biao-ti-10063.png",
-  "https://i.postimg.cc/rp9rFSk2/wei-biao-ti-10064.png",
-  "https://i.postimg.cc/s2JhDpry/wei-biao-ti-10065.png",
-  "https://i.postimg.cc/bvRtNQhp/wei-biao-ti-10066.png",
-  "https://i.postimg.cc/cJcn4QS1/wei-biao-ti-10067.png",
-  "https://i.postimg.cc/g0KZkvW2/wei-biao-ti-10068.png",
-  "https://i.postimg.cc/8Cb6PhS5/wei-biao-ti-10069.png",
-  "https://i.postimg.cc/k4XtVBJd/wei-biao-ti-10070.png",
-  "https://i.postimg.cc/k4XtVBJm/wei-biao-ti-10071.png",
-  "https://i.postimg.cc/hjP7JfDn/wei-biao-ti-10072.png"
+  "https://i.postimg.cc/vTYGK7x9/wei-biao-ti-10000.webp",
+  "https://i.postimg.cc/yx17Gh3R/wei-biao-ti-10001.webp",
+  "https://i.postimg.cc/0jk94GKp/wei-biao-ti-10002.webp",
+  "https://i.postimg.cc/mkLTn31C/wei-biao-ti-10003.webp",
+  "https://i.postimg.cc/0jk94GKC/wei-biao-ti-10004.webp",
+  "https://i.postimg.cc/90mckPwY/wei-biao-ti-10005.webp",
+  "https://i.postimg.cc/zvzqQwHj/wei-biao-ti-10006.webp",
+  "https://i.postimg.cc/8cpTYdfw/wei-biao-ti-10007.webp",
+  "https://i.postimg.cc/BbSJz5PV/wei-biao-ti-10008.webp",
+  "https://i.postimg.cc/WzNsymq9/wei-biao-ti-10009.webp",
+  "https://i.postimg.cc/cCxdz7tz/wei-biao-ti-10010.webp",
+  "https://i.postimg.cc/bryq50SM/wei-biao-ti-10011.webp",
+  "https://i.postimg.cc/90mckPws/wei-biao-ti-10012.webp",
+  "https://i.postimg.cc/7hHqR1Jp/wei-biao-ti-10013.webp",
+  "https://i.postimg.cc/gjgGbw3g/wei-biao-ti-10014.webp",
+  "https://i.postimg.cc/zvxqYLT9/wei-biao-ti-10016.webp",
+  "https://i.postimg.cc/yxL7CJ0t/wei-biao-ti-10017.webp",
+  "https://i.postimg.cc/vT0Gw15C/wei-biao-ti-10018.webp",
+  "https://i.postimg.cc/7hKqrCgv/wei-biao-ti-10019.webp",
+  "https://i.postimg.cc/NFdQvy1Y/wei-biao-ti-10020.webp",
+  "https://i.postimg.cc/PJSdnLmd/wei-biao-ti-10022.webp",
+  "https://i.postimg.cc/GtXbnBkH/wei-biao-ti-10023.webp",
+  "https://i.postimg.cc/tRkqxc8h/wei-biao-ti-10024.webp",
+  "https://i.postimg.cc/ryjVrH7G/wei-biao-ti-10025.webp",
+  "https://i.postimg.cc/v8hYVKCX/wei-biao-ti-10026.webp",
+  "https://i.postimg.cc/44Pf90jB/wei-biao-ti-10028.webp",
+  "https://i.postimg.cc/qBwJ3FW1/wei-biao-ti-10029.webp",
+  "https://i.postimg.cc/1RBmqdbY/wei-biao-ti-10030.webp",
+  "https://i.postimg.cc/Df6vXNRM/wei-biao-ti-10031.webp",
+  "https://i.postimg.cc/nV2FDWNN/wei-biao-ti-10032.webp",
+  "https://i.postimg.cc/dQ6syfgp/wei-biao-ti-10033.webp",
+  "https://i.postimg.cc/CM7hq293/wei-biao-ti-10034.webp",
+  "https://i.postimg.cc/mZjLHn04/wei-biao-ti-10035.webp",
+  "https://i.postimg.cc/wx2qmrSp/wei-biao-ti-10036.webp",
+  "https://i.postimg.cc/jqcx71GK/wei-biao-ti-10037.webp",
+  "https://i.postimg.cc/BZpSKzdJ/wei-biao-ti-10038.webp",
+  "https://i.postimg.cc/dt0qmBYM/wei-biao-ti-10040.webp",
+  "https://i.postimg.cc/285zFwDD/wei-biao-ti-10041.webp",
+  "https://i.postimg.cc/MKGWbDSq/wei-biao-ti-10042.webp",
+  "https://i.postimg.cc/TYPRq96R/wei-biao-ti-10043.webp",
+  "https://i.postimg.cc/8PC1BHSP/wei-biao-ti-10044.webp",
+  "https://i.postimg.cc/9FfWtphM/wei-biao-ti-10046.webp",
+  "https://i.postimg.cc/4N3Jb5gm/wei-biao-ti-10047.webp",
+  "https://i.postimg.cc/Prqtz4jp/wei-biao-ti-10048.webp",
+  "https://i.postimg.cc/fTbwjKNS/wei-biao-ti-10049.webp",
+  "https://i.postimg.cc/vHmQLzsV/wei-biao-ti-10050.webp",
+  "https://i.postimg.cc/zXfJSjrW/wei-biao-ti-10052.webp",
+  "https://i.postimg.cc/5Ntxq3VL/wei-biao-ti-10053.webp",
+  "https://i.postimg.cc/SNtmZMSK/wei-biao-ti-10054.webp",
+  "https://i.postimg.cc/DyY7CXv0/wei-biao-ti-10055.webp",
+  "https://i.postimg.cc/GhSbMyLT/wei-biao-ti-10056.webp",
+  "https://i.postimg.cc/DyY7CXvb/wei-biao-ti-10057.webp",
+  "https://i.postimg.cc/651BHvWv/wei-biao-ti-10058.webp",
+  "https://i.postimg.cc/DyY7CXv1/wei-biao-ti-10059.webp",
+  "https://i.postimg.cc/YqytXWrx/wei-biao-ti-10060.webp",
+  "https://i.postimg.cc/651BHvWc/wei-biao-ti-10061.webp",
+  "https://i.postimg.cc/rFYqhrVG/wei-biao-ti-10062.webp",
+  "https://i.postimg.cc/hP3KCdD3/wei-biao-ti-10064.webp",
+  "https://i.postimg.cc/zXPqdgzQ/wei-biao-ti-10065.webp",
+  "https://i.postimg.cc/JzDMSz05/wei-biao-ti-10066.webp",
+  "https://i.postimg.cc/cLg0PLCm/wei-biao-ti-10067.webp",
+  "https://i.postimg.cc/mgzBKgkp/wei-biao-ti-10069.webp",
+  "https://i.postimg.cc/rw0M7wsP/wei-biao-ti-10070.webp",
+  "https://i.postimg.cc/YCGMTC0Z/wei-biao-ti-10071.webp",
+  "https://i.postimg.cc/Vkrm2k5y/wei-biao-ti-10072.webp"
 ];
 
 const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
@@ -343,12 +341,19 @@ const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
       {/* Background Sequence - Controlled by Scroll */}
       <div className="absolute inset-0 z-0">
         <div className="w-full h-full relative">
-          <img 
-            src={FRAME_URLS[frameIndex] || FRAME_URLS[0]} 
-            alt={`Cosmos Frame ${frameIndex}`} 
-            className="w-full h-full object-cover grayscale-[0.2] brightness-[0.7]"
-            referrerPolicy="no-referrer"
-          />
+          {FRAME_URLS.map((url, i) => (
+            <img 
+              key={url}
+              src={url} 
+              alt={`Cosmos Frame ${i}`} 
+              className="absolute inset-0 w-full h-full object-cover grayscale-[0.2] brightness-[0.7]"
+              style={{ 
+                opacity: i === frameIndex ? 1 : 0,
+                visibility: i === frameIndex ? 'visible' : 'hidden'
+              }}
+              referrerPolicy="no-referrer"
+            />
+          ))}
           {/* Cinematic Overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.1)_0%,transparent_70%)]" />
@@ -659,7 +664,7 @@ const EndPageOverlay = () => {
           transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
           className="text-[12vw] poster-title glow-hover mb-12"
         >
-          THE END
+          THANKS
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -751,104 +756,31 @@ export default function App() {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isGlitching, setIsGlitching] = useState(false);
   const [isRippling, setIsRippling] = useState(false);
-  const totalFrames = 73;
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const totalFrames = FRAME_URLS.length;
 
-  // Preload images for Page 2
+  // Preload all images
   useEffect(() => {
-    const frameUrls = [
-      "https://i.postimg.cc/T2NnDqWM/wei-biao-ti-10000.png",
-      "https://i.postimg.cc/CMrbqHfp/wei-biao-ti-10001.png",
-      "https://i.postimg.cc/WpY0k6JP/wei-biao-ti-10002.png",
-      "https://i.postimg.cc/RCpwHQnB/wei-biao-ti-10003.png",
-      "https://i.postimg.cc/bYV1tH2N/wei-biao-ti-10004.png",
-      "https://i.postimg.cc/MZ31QbjG/wei-biao-ti-10005.png",
-      "https://i.postimg.cc/pVcKFYny/wei-biao-ti-10006.png",
-      "https://i.postimg.cc/kMYWbFt4/wei-biao-ti-10007.png",
-      "https://i.postimg.cc/NGCRH7ry/wei-biao-ti-10008.png",
-      "https://i.postimg.cc/3rf2vCDD/wei-biao-ti-10009.png",
-      "https://i.postimg.cc/VLSnBrjf/wei-biao-ti-10010.png",
-      "https://i.postimg.cc/KcptMrg3/wei-biao-ti-10011.png",
-      "https://i.postimg.cc/9F4ZtRG0/wei-biao-ti-10012.png",
-      "https://i.postimg.cc/J4yZcDbt/wei-biao-ti-10013.png",
-      "https://i.postimg.cc/rFdxC0Sm/wei-biao-ti-10014.png",
-      "https://i.postimg.cc/SNXC72WJ/wei-biao-ti-10015.png",
-      "https://i.postimg.cc/ncsBYjvm/wei-biao-ti-10016.png",
-      "https://i.postimg.cc/5NHLqYwB/wei-biao-ti-10017.png",
-      "https://i.postimg.cc/8PFMBJhm/wei-biao-ti-10018.png",
-      "https://i.postimg.cc/vH00gK6k/wei-biao-ti-10019.png",
-      "https://i.postimg.cc/0jWvWp64/wei-biao-ti-10020.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10021.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10022.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10023.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10024.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10025.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10026.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10027.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10028.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10029.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10030.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10031.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10032.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10033.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10034.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10035.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10036.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10037.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10038.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10039.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10040.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10041.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10042.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10043.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10044.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10045.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10046.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10047.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10048.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10049.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10050.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10051.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10052.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10053.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10054.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10055.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10056.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10057.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10058.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10059.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10060.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10061.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10062.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10063.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10064.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10065.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10066.png",
-      "https://i.postimg.cc/0jTfXfXf/wei-biao-ti-10067.png",
-      "https://i.postimg.cc/g0KZkvW2/wei-biao-ti-10068.png",
-      "https://i.postimg.cc/8Cb6PhS5/wei-biao-ti-10069.png",
-      "https://i.postimg.cc/k4XtVBJd/wei-biao-ti-10070.png",
-      "https://i.postimg.cc/k4XtVBJm/wei-biao-ti-10071.png",
-      "https://i.postimg.cc/hjP7JfDn/wei-biao-ti-10072.png"
-    ];
-    const preloadImages = async () => {
-      // Load first 10 immediately
-      for (let i = 0; i < Math.min(10, FRAME_URLS.length); i++) {
-        const img = new Image();
-        img.src = FRAME_URLS[i];
-      }
-      
-      // Load the rest in the background
-      setTimeout(() => {
-        for (let i = 10; i < FRAME_URLS.length; i++) {
-          const img = new Image();
-          img.src = FRAME_URLS[i];
-        }
-      }, 2000);
-    };
-    preloadImages();
+    const allImages = [...FRAME_URLS, ...OTHER_IMAGES];
+    let loaded = 0;
+
+    if (allImages.length === 0) {
+      setLoadingProgress(100);
+      return;
+    }
+
+    allImages.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      img.onload = img.onerror = () => {
+        loaded++;
+        setLoadingProgress((loaded / allImages.length) * 100);
+      };
+    });
   }, []);
 
   const stateRef = useRef({ currentPage, isScrolling, currentFrame });
+  const scrollAccumulator = useRef(0);
   
   useEffect(() => {
     stateRef.current = { currentPage, isScrolling, currentFrame };
@@ -863,14 +795,21 @@ export default function App() {
 
       // Page 2 (index 1) has special scroll behavior for frames
       if (currentPage === 1) {
-        const sensitivity = 30; 
-        const frameChange = Math.round(e.deltaY / sensitivity);
+        const sensitivity = 40; // Adjust sensitivity for smoother scroll
+        scrollAccumulator.current += e.deltaY;
+        
+        nextFrame = Math.floor(scrollAccumulator.current / sensitivity);
 
-        if (frameChange !== 0) {
-          nextFrame = Math.max(0, Math.min(totalFrames - 1, currentFrame + frameChange));
-        } else if (Math.abs(e.deltaY) > 0) {
-          const smallStep = e.deltaY > 0 ? 1 : -1;
-          nextFrame = Math.max(0, Math.min(totalFrames - 1, currentFrame + smallStep));
+        // Clamp nextFrame and accumulator
+        if (nextFrame < 0) {
+          nextFrame = 0;
+          scrollAccumulator.current = 0;
+        } else if (nextFrame >= totalFrames - 1) {
+          nextFrame = totalFrames - 1;
+          // Add a small buffer at the end so it doesn't immediately jump to next page
+          if (scrollAccumulator.current > (totalFrames - 1) * sensitivity + 50) {
+            scrollAccumulator.current = (totalFrames - 1) * sensitivity + 50;
+          }
         }
 
         if (nextFrame !== currentFrame) {
@@ -878,9 +817,9 @@ export default function App() {
           stateRef.current.currentFrame = nextFrame;
         }
         
-        // Stay on page 2 if we are still within the sequence bounds
-        if (e.deltaY > 0 && nextFrame < totalFrames - 1) return;
-        if (e.deltaY < 0 && nextFrame > 0) return;
+        // Stay on page 2 if we are still within the sequence bounds or buffer
+        if (e.deltaY > 0 && scrollAccumulator.current < (totalFrames - 1) * sensitivity + 50) return;
+        if (e.deltaY < 0 && scrollAccumulator.current > 0) return;
       }
 
       // Normal page transitions
@@ -904,11 +843,16 @@ export default function App() {
         }
 
         setCurrentPage(next);
+        if (next === 1) {
+          scrollAccumulator.current = 0;
+          setCurrentFrame(0);
+          stateRef.current.currentFrame = 0;
+        }
         setTimeout(() => {
           setIsScrolling(false);
           stateRef.current.isScrolling = false;
         }, 800);
-      } else if (e.deltaY < -50 && currentPage > 0) {
+      } else if (e.deltaY < -50 && currentPage > 1) {
         const prev = currentPage - 1;
         setIsScrolling(true);
         stateRef.current.isScrolling = true;
@@ -926,6 +870,11 @@ export default function App() {
         }
 
         setCurrentPage(prev);
+        if (prev === 1) {
+          scrollAccumulator.current = (totalFrames - 1) * 40;
+          setCurrentFrame(totalFrames - 1);
+          stateRef.current.currentFrame = totalFrames - 1;
+        }
         setTimeout(() => {
           setIsScrolling(false);
           stateRef.current.isScrolling = false;
@@ -943,7 +892,7 @@ export default function App() {
       <NoiseOverlay />
       <TechnicalLines />
       
-      <TechnicalHeader pageNum={currentPage + 1} />
+      <TechnicalHeader pageNum={currentPage === 0 ? 1 : currentPage} />
       <TechnicalFooter />
 
       <AnimatePresence>
@@ -953,20 +902,30 @@ export default function App() {
 
       {/* Navigation Indicators */}
       <div className="fixed right-10 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i)}
-            className={`group flex items-center gap-4 transition-all duration-500`}
-          >
-            <span className={`micro-label transition-opacity duration-500 ${currentPage === i ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'}`}>
-              0{i + 1}
-            </span>
-            <div className={`w-1 transition-all duration-500 ${
-              currentPage === i ? 'bg-poster-accent h-12' : 'bg-white/10 h-4 group-hover:bg-white/30'
-            }`} />
-          </button>
-        ))}
+        {Array.from({ length: 5 }).map((_, idx) => {
+          const i = idx + 1;
+          return (
+            <button
+              key={i}
+              onClick={() => {
+                setCurrentPage(i);
+                if (i === 1) {
+                  scrollAccumulator.current = 0;
+                  setCurrentFrame(0);
+                  stateRef.current.currentFrame = 0;
+                }
+              }}
+              className={`group flex items-center gap-4 transition-all duration-500`}
+            >
+              <span className={`micro-label transition-opacity duration-500 ${currentPage === i ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'}`}>
+                0{i}
+              </span>
+              <div className={`w-1 transition-all duration-500 ${
+                currentPage === i ? 'bg-poster-accent h-12' : 'bg-white/10 h-4 group-hover:bg-white/30'
+              }`} />
+            </button>
+          );
+        })}
       </div>
 
       {/* Page Content */}
@@ -979,10 +938,13 @@ export default function App() {
           transition={{ duration: 0.6, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          {currentPage === 0 && <Page1Terminal onNext={() => {
+          {currentPage === 0 && <Page1Terminal progress={loadingProgress} onNext={() => {
             setIsGlitching(true);
             setTimeout(() => setIsGlitching(false), 500);
             setCurrentPage(1);
+            scrollAccumulator.current = 0;
+            setCurrentFrame(0);
+            stateRef.current.currentFrame = 0;
           }} />}
           {currentPage === 1 && <Page2BlackHole frameIndex={currentFrame} />}
           {currentPage === 2 && <Page3MultiDimension />}
@@ -997,7 +959,7 @@ export default function App() {
         <motion.div 
           className="h-full bg-poster-accent"
           initial={{ width: "0%" }}
-          animate={{ width: `${((currentPage + 1) / 6) * 100}%` }}
+          animate={{ width: `${currentPage === 0 ? 0 : (currentPage / 5) * 100}%` }}
           transition={{ duration: 0.8 }}
         />
       </div>
