@@ -467,6 +467,26 @@ const Page2BlackHole = ({ frameIndex }: { frameIndex: number }) => {
         </div>
         <span className="font-mono text-[10px]">{String(frameIndex).padStart(2, '0')} / {totalFrames - 1}</span>
       </div>
+
+      {/* Scroll to Continue Hint */}
+      <AnimatePresence>
+        {frameIndex === totalFrames - 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+          >
+            <span className="micro-label opacity-40 tracking-[0.5em] text-[10px]">SCROLL TO CONTINUE</span>
+            <motion.div 
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="w-[1px] h-8 bg-poster-accent/50"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -840,6 +860,9 @@ export default function App() {
       // Page 2 (index 1) has special scroll behavior for frames
       if (currentPage === 1) {
         const sensitivity = 40; // Adjust sensitivity for smoother scroll
+        const endBuffer = 800; // Buffer at the end of sequence
+        const startBuffer = -400; // Buffer at the beginning of sequence
+        
         scrollAccumulator.current += e.deltaY;
         
         nextFrame = Math.floor(scrollAccumulator.current / sensitivity);
@@ -847,12 +870,13 @@ export default function App() {
         // Clamp nextFrame and accumulator
         if (nextFrame < 0) {
           nextFrame = 0;
-          scrollAccumulator.current = 0;
+          if (scrollAccumulator.current < startBuffer) {
+            scrollAccumulator.current = startBuffer;
+          }
         } else if (nextFrame >= totalFrames - 1) {
           nextFrame = totalFrames - 1;
-          // Add a small buffer at the end so it doesn't immediately jump to next page
-          if (scrollAccumulator.current > (totalFrames - 1) * sensitivity + 50) {
-            scrollAccumulator.current = (totalFrames - 1) * sensitivity + 50;
+          if (scrollAccumulator.current > (totalFrames - 1) * sensitivity + endBuffer) {
+            scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer;
           }
         }
 
@@ -862,12 +886,13 @@ export default function App() {
         }
         
         // Stay on page 2 if we are still within the sequence bounds or buffer
-        if (e.deltaY > 0 && scrollAccumulator.current < (totalFrames - 1) * sensitivity + 50) return;
-        if (e.deltaY < 0 && scrollAccumulator.current > 0) return;
+        if (e.deltaY > 0 && scrollAccumulator.current < (totalFrames - 1) * sensitivity + endBuffer) return;
+        if (e.deltaY < 0 && scrollAccumulator.current > startBuffer) return;
       }
 
       // Normal page transitions
-      const scrollThreshold = (currentPage === 1 && nextFrame === totalFrames - 1) ? 1 : 50;
+      const scrollThreshold = (currentPage === 1 && nextFrame === totalFrames - 1) ? 80 : 50;
+      const backScrollThreshold = (currentPage === 1 && nextFrame === 0) ? -80 : -50;
       
       if (e.deltaY > scrollThreshold && currentPage < 5) {
         const next = currentPage + 1;
@@ -888,7 +913,7 @@ export default function App() {
 
         setCurrentPage(next);
         if (next === 1) {
-          scrollAccumulator.current = 0;
+          scrollAccumulator.current = 50; // Set slightly into the sequence to avoid immediate jump back
           setCurrentFrame(0);
           stateRef.current.currentFrame = 0;
         }
@@ -896,7 +921,7 @@ export default function App() {
           setIsScrolling(false);
           stateRef.current.isScrolling = false;
         }, 800);
-      } else if (e.deltaY < -50 && currentPage > 1) {
+      } else if (e.deltaY < backScrollThreshold && currentPage > 0) {
         const prev = currentPage - 1;
         setIsScrolling(true);
         stateRef.current.isScrolling = true;
@@ -915,7 +940,9 @@ export default function App() {
 
         setCurrentPage(prev);
         if (prev === 1) {
-          scrollAccumulator.current = (totalFrames - 1) * 40;
+          const sensitivity = 40;
+          const endBuffer = 800;
+          scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer - 50; // Set near the end of the buffer
           setCurrentFrame(totalFrames - 1);
           stateRef.current.currentFrame = totalFrames - 1;
         }
