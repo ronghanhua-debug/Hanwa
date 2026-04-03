@@ -168,7 +168,7 @@ const RippleEffect = () => (
 
 // --- Pages ---
 
-const Page1Terminal = ({ progress, onNext }: { progress: number, onNext: () => void }) => {
+const Page1Terminal = ({ progress, onNext, isInitialLoadComplete }: { progress: number, onNext: () => void, isInitialLoadComplete: boolean }) => {
   const [logs, setLogs] = useState<string[]>([]);
   const [logsFinished, setLogsFinished] = useState(false);
   
@@ -188,6 +188,12 @@ const Page1Terminal = ({ progress, onNext }: { progress: number, onNext: () => v
   ];
 
   useEffect(() => {
+    if (isInitialLoadComplete) {
+      setLogs(bootLogs);
+      setLogsFinished(true);
+      return;
+    }
+
     let logIndex = 0;
     const logInterval = setInterval(() => {
       if (logIndex < bootLogs.length) {
@@ -196,18 +202,19 @@ const Page1Terminal = ({ progress, onNext }: { progress: number, onNext: () => v
       } else {
         clearInterval(logInterval);
         setLogsFinished(true);
+        sessionStorage.setItem('isInitialLoadComplete', 'true');
       }
     }, 150);
 
     return () => clearInterval(logInterval);
-  }, []);
+  }, [isInitialLoadComplete]);
 
   useEffect(() => {
-    if (progress >= 100 && logsFinished) {
+    if (progress >= 100 && logsFinished && !isInitialLoadComplete) {
       const t = setTimeout(onNext, 800);
       return () => clearTimeout(t);
     }
-  }, [progress, logsFinished, onNext]);
+  }, [progress, logsFinished, onNext, isInitialLoadComplete]);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-black p-12 relative overflow-hidden terminal-text">
@@ -850,112 +857,126 @@ export default function App() {
     stateRef.current = { currentPage, isScrolling, currentFrame };
   }, [currentPage, isScrolling, currentFrame]);
 
+  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(() => {
+    return sessionStorage.getItem('isInitialLoadComplete') === 'true';
+  });
+
   useEffect(() => {
-    const handleScroll = (e: WheelEvent) => {
-      const { currentPage, isScrolling, currentFrame } = stateRef.current;
-      if (isScrolling) return;
+    if (isInitialLoadComplete) {
+      sessionStorage.setItem('isInitialLoadComplete', 'true');
+    }
+  }, [isInitialLoadComplete]);
 
-      let nextFrame = currentFrame;
+  const handleScroll = (e: WheelEvent) => {
+    const { currentPage, isScrolling, currentFrame } = stateRef.current;
+    
+    // 1. Animation Lock & Thresholding
+    if (isScrolling || Math.abs(e.deltaY) < 50) return;
 
-      // Page 2 (index 1) has special scroll behavior for frames
-      if (currentPage === 1) {
-        const sensitivity = 40; // Adjust sensitivity for smoother scroll
-        const endBuffer = 200; // Buffer at the end of sequence
-        const startBuffer = -200; // Buffer at the beginning of sequence
-        
-        scrollAccumulator.current += e.deltaY;
-        
-        nextFrame = Math.floor(scrollAccumulator.current / sensitivity);
+    let nextFrame = currentFrame;
 
-        // Clamp nextFrame and accumulator
-        if (nextFrame < 0) {
-          nextFrame = 0;
-          if (scrollAccumulator.current < startBuffer) {
-            scrollAccumulator.current = startBuffer;
-          }
-        } else if (nextFrame >= totalFrames - 1) {
-          nextFrame = totalFrames - 1;
-          if (scrollAccumulator.current > (totalFrames - 1) * sensitivity + endBuffer) {
-            scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer;
-          }
-        }
-
-        if (nextFrame !== currentFrame) {
-          setCurrentFrame(nextFrame);
-          stateRef.current.currentFrame = nextFrame;
-        }
-        
-        // Stay on page 2 if we are still within the sequence bounds or buffer
-        if (e.deltaY > 0 && scrollAccumulator.current < (totalFrames - 1) * sensitivity + endBuffer) return;
-        if (e.deltaY < 0 && scrollAccumulator.current > startBuffer) return;
-      }
-
-      // Normal page transitions
-      const scrollThreshold = (currentPage === 1 && nextFrame === totalFrames - 1) ? 40 : 50;
-      const backScrollThreshold = (currentPage === 1 && nextFrame === 0) ? -40 : -50;
+    // Page 2 (index 1) has special scroll behavior for frames
+    if (currentPage === 1) {
+      const sensitivity = 40;
+      const endBuffer = 200;
+      const startBuffer = -200;
       
-      if (e.deltaY > scrollThreshold && currentPage < 5) {
-        const next = currentPage + 1;
-        setIsScrolling(true);
-        stateRef.current.isScrolling = true;
-        
-        // Trigger glitch if moving between 0 and 1 (Page 1 and 2) or 1 and 2 (Page 2 and 3)
-        if ((currentPage === 0 && next === 1) || (currentPage === 1 && next === 0) || (currentPage === 1 && next === 2) || (currentPage === 2 && next === 1)) {
-          setIsGlitching(true);
-          setTimeout(() => setIsGlitching(false), 500);
-        }
+      scrollAccumulator.current += e.deltaY;
+      
+      nextFrame = Math.floor(scrollAccumulator.current / sensitivity);
 
-        // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
-        if ((currentPage === 2 && next === 3) || (currentPage === 3 && next === 2)) {
-          setIsRippling(true);
-          setTimeout(() => setIsRippling(false), 800);
+      // Clamp nextFrame and accumulator
+      if (nextFrame < 0) {
+        nextFrame = 0;
+        if (scrollAccumulator.current < startBuffer) {
+          scrollAccumulator.current = startBuffer;
         }
-
-        setCurrentPage(next);
-        if (next === 1) {
-          scrollAccumulator.current = 50; // Set slightly into the sequence to avoid immediate jump back
-          setCurrentFrame(0);
-          stateRef.current.currentFrame = 0;
+      } else if (nextFrame >= totalFrames - 1) {
+        nextFrame = totalFrames - 1;
+        if (scrollAccumulator.current > (totalFrames - 1) * sensitivity + endBuffer) {
+          scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer;
         }
-        setTimeout(() => {
-          setIsScrolling(false);
-          stateRef.current.isScrolling = false;
-        }, 800);
-      } else if (e.deltaY < backScrollThreshold && currentPage > 0) {
-        const prev = currentPage - 1;
-        setIsScrolling(true);
-        stateRef.current.isScrolling = true;
-
-        // Trigger glitch if moving between 0 and 1 (Page 1 and 2) or 1 and 2 (Page 2 and 3)
-        if ((currentPage === 1 && prev === 0) || (currentPage === 0 && prev === 1) || (currentPage === 2 && prev === 1) || (currentPage === 1 && prev === 2)) {
-          setIsGlitching(true);
-          setTimeout(() => setIsGlitching(false), 500);
-        }
-
-        // Trigger ripple if moving between 2 and 3 (Page 3 and 4)
-        if ((currentPage === 3 && prev === 2) || (currentPage === 2 && prev === 3)) {
-          setIsRippling(true);
-          setTimeout(() => setIsRippling(false), 800);
-        }
-
-        setCurrentPage(prev);
-        if (prev === 1) {
-          const sensitivity = 40;
-          const endBuffer = 200;
-          scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer - 20; // Set near the end of the buffer
-          setCurrentFrame(totalFrames - 1);
-          stateRef.current.currentFrame = totalFrames - 1;
-        }
-        setTimeout(() => {
-          setIsScrolling(false);
-          stateRef.current.isScrolling = false;
-        }, 800);
       }
-    };
 
+      if (nextFrame !== currentFrame) {
+        setCurrentFrame(nextFrame);
+        stateRef.current.currentFrame = nextFrame;
+      }
+      
+      // Stay on page 2 if we are still within the sequence bounds or buffer
+      if (e.deltaY > 0 && scrollAccumulator.current < (totalFrames - 1) * sensitivity + endBuffer) return;
+      if (e.deltaY < 0 && scrollAccumulator.current > startBuffer) return;
+    }
+
+    // Normal page transitions
+    const scrollThreshold = 50;
+    
+    if (e.deltaY > scrollThreshold && currentPage < 5) {
+      const next = currentPage + 1;
+      
+      setIsScrolling(true);
+      stateRef.current.isScrolling = true;
+      
+      // Trigger effects
+      if ((currentPage === 0 && next === 1) || (currentPage === 1 && next === 0) || (currentPage === 1 && next === 2) || (currentPage === 2 && next === 1)) {
+        setIsGlitching(true);
+        setTimeout(() => setIsGlitching(false), 500);
+      }
+      if ((currentPage === 2 && next === 3) || (currentPage === 3 && next === 2)) {
+        setIsRippling(true);
+        setTimeout(() => setIsRippling(false), 800);
+      }
+
+      setCurrentPage(next);
+      if (next === 1) {
+        scrollAccumulator.current = 50;
+        setCurrentFrame(0);
+        stateRef.current.currentFrame = 0;
+      }
+      
+      // Cooldown
+      setTimeout(() => {
+        setIsScrolling(false);
+        stateRef.current.isScrolling = false;
+      }, 800);
+    } else if (e.deltaY < -scrollThreshold && currentPage > 1) {
+      const prev = currentPage - 1;
+      
+      setIsScrolling(true);
+      stateRef.current.isScrolling = true;
+
+      // Trigger effects
+      if ((currentPage === 1 && prev === 0) || (currentPage === 0 && prev === 1) || (currentPage === 2 && prev === 1) || (currentPage === 1 && prev === 2)) {
+        setIsGlitching(true);
+        setTimeout(() => setIsGlitching(false), 500);
+      }
+      if ((currentPage === 3 && prev === 2) || (currentPage === 2 && prev === 3)) {
+        setIsRippling(true);
+        setTimeout(() => setIsRippling(false), 800);
+      }
+
+      setCurrentPage(prev);
+      if (prev === 1) {
+        const sensitivity = 40;
+        const endBuffer = 200;
+        scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer - 20;
+        setCurrentFrame(totalFrames - 1);
+        stateRef.current.currentFrame = totalFrames - 1;
+      }
+      
+      // Cooldown
+      setTimeout(() => {
+        setIsScrolling(false);
+        stateRef.current.isScrolling = false;
+      }, 800);
+    }
+  };
+
+  useEffect(() => {
     window.addEventListener('wheel', handleScroll, { passive: false });
     return () => window.removeEventListener('wheel', handleScroll);
   }, []);
+
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-black text-white">
@@ -1030,13 +1051,14 @@ export default function App() {
           transition={{ duration: 0.6, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          {currentPage === 0 && <Page1Terminal progress={loadingProgress} onNext={() => {
+          {currentPage === 0 && <Page1Terminal progress={loadingProgress} isInitialLoadComplete={isInitialLoadComplete} onNext={() => {
             setIsGlitching(true);
             setTimeout(() => setIsGlitching(false), 500);
             setCurrentPage(1);
             scrollAccumulator.current = 0;
             setCurrentFrame(0);
             stateRef.current.currentFrame = 0;
+            setIsInitialLoadComplete(true);
           }} />}
           {currentPage === 1 && <Page2BlackHole frameIndex={currentFrame} />}
           {currentPage === 2 && <Page3MultiDimension />}
