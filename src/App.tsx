@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Rocket, Box, Cpu, Globe, Zap, Monitor, Sparkles, ChevronDown, Info, Plus } from 'lucide-react';
+import { Rocket, Box, Cpu, Globe, Zap, Monitor, Sparkles, ChevronDown, Info, Plus, Volume2, VolumeX } from 'lucide-react';
 
 const OTHER_IMAGES = [
   "https://i.postimg.cc/6px5twdH/yu-hang-yuan-shou-bu-xiu-fu.png",
@@ -757,7 +757,51 @@ export default function App() {
   const [isGlitching, setIsGlitching] = useState(false);
   const [isRippling, setIsRippling] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const totalFrames = FRAME_URLS.length;
+
+  // Handle first interaction for audio autoplay
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (audioRef.current && isPlaying) {
+        audioRef.current.play().catch(() => {
+          // Suppress autoplay console error as it's expected behavior
+        });
+      }
+      // Remove listeners after first interaction attempt
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('wheel', handleFirstInteraction);
+    };
+
+    window.addEventListener('click', handleFirstInteraction);
+    window.addEventListener('keydown', handleFirstInteraction);
+    window.addEventListener('wheel', handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('wheel', handleFirstInteraction);
+    };
+  }, [isPlaying]);
+
+  // Sync audio state with isPlaying
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(() => {
+          // This might fail if no user interaction yet, handled by handleFirstInteraction
+        });
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
+
+  const toggleMusic = () => {
+    setIsPlaying(!isPlaying);
+  };
 
   // Preload all images
   useEffect(() => {
@@ -888,6 +932,27 @@ export default function App() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-black text-white">
+      {/* Background Music */}
+      <audio 
+        ref={audioRef} 
+        src="https://fengyejiyuan.oss-rg-china-mainland.aliyuncs.com/Event%20Horizon%20Caravan.mp3" 
+        loop 
+        preload="auto"
+      />
+
+      {/* Music Toggle Button */}
+      <button
+        onClick={toggleMusic}
+        className="fixed top-8 right-32 z-[100] p-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 backdrop-blur-md group cursor-pointer"
+        title="Toggle Music"
+      >
+        {isPlaying ? (
+          <Volume2 className="w-5 h-5 text-poster-accent group-hover:scale-110 transition-transform" />
+        ) : (
+          <VolumeX className="w-5 h-5 text-white/50 group-hover:scale-110 transition-transform" />
+        )}
+      </button>
+
       <MouseGlow />
       <NoiseOverlay />
       <TechnicalLines />
