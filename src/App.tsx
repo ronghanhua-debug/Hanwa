@@ -860,8 +860,8 @@ export default function App() {
       // Page 2 (index 1) has special scroll behavior for frames
       if (currentPage === 1) {
         const sensitivity = 40; // Adjust sensitivity for smoother scroll
-        const endBuffer = 800; // Buffer at the end of sequence
-        const startBuffer = -400; // Buffer at the beginning of sequence
+        const endBuffer = 200; // Buffer at the end of sequence
+        const startBuffer = -200; // Buffer at the beginning of sequence
         
         scrollAccumulator.current += e.deltaY;
         
@@ -891,8 +891,8 @@ export default function App() {
       }
 
       // Normal page transitions
-      const scrollThreshold = (currentPage === 1 && nextFrame === totalFrames - 1) ? 80 : 50;
-      const backScrollThreshold = (currentPage === 1 && nextFrame === 0) ? -80 : -50;
+      const scrollThreshold = (currentPage === 1 && nextFrame === totalFrames - 1) ? 40 : 50;
+      const backScrollThreshold = (currentPage === 1 && nextFrame === 0) ? -40 : -50;
       
       if (e.deltaY > scrollThreshold && currentPage < 5) {
         const next = currentPage + 1;
@@ -941,8 +941,8 @@ export default function App() {
         setCurrentPage(prev);
         if (prev === 1) {
           const sensitivity = 40;
-          const endBuffer = 800;
-          scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer - 50; // Set near the end of the buffer
+          const endBuffer = 200;
+          scrollAccumulator.current = (totalFrames - 1) * sensitivity + endBuffer - 20; // Set near the end of the buffer
           setCurrentFrame(totalFrames - 1);
           stateRef.current.currentFrame = totalFrames - 1;
         }
